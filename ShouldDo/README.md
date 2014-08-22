@@ -16,7 +16,8 @@ Completed user stories:
  
  
 Notes:
+Here is a small gif that adds a todo, edits it and then removes another one. The data is stored in sqlite so app data persists across multiple runs.
 
-![Need to create gif for user stories](docextras/todo_example1.png)
+![Demo](docextras/TodoNotesDemo.gif)
 
-Walkthrough of all user stories:
+
