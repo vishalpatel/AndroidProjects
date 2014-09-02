@@ -22,29 +22,28 @@ import android.widget.Toast;
 
 public class TodoActivity extends Activity {
 	private final int REQUEST_CODE = 32;
-	ArrayList<String> items;
-	ArrayAdapter<String> itemsAdapter;
+	//ArrayList<String> items;
+	//ArrayAdapter<String> itemsAdapter;
+	private TodoItemDataAdaptor itemsAdapter;
 	ListView lvItems;
-	DataAccessHelper itemsDAO;
-	ArrayList<TodoItem> TodoItemsList;
+	//DataAccessHelper itemsDAO;
+	//ArrayList<TodoItem> TodoItemsList;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_todo);
-        itemsDAO = new DataAccessHelper(this);
 
         lvItems = (ListView)findViewById(R.id.lvItems);
-        readItems();
-        itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, items);
+        itemsAdapter = new TodoItemDataAdaptor(getApplicationContext(), R.id.lvItems, R.id.cbListItemDoneStatus);
+        itemsAdapter.readItems();
         lvItems.setAdapter(itemsAdapter);
         setupListViewListener();
     }
 
     public void addTodoItem(View v) {
     	EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
-    	itemsAdapter.add(etNewItem.getText().toString());
-    	saveNewItem(new TodoItem(etNewItem.getText().toString()));
+    	itemsAdapter.addTodoItem(etNewItem.getText().toString());
     	etNewItem.setText("");
     }
     
@@ -56,7 +55,7 @@ public class TodoActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				
-				String item_desc = items.get(position);
+				String item_desc = itemsAdapter.getItem(position).getDescription();
 				Intent editItemIntent = new Intent(TodoActivity.this, EditItemActivity.class);
 				editItemIntent.putExtra("item_description", item_desc);
 				editItemIntent.putExtra("item_position", position);
@@ -68,11 +67,10 @@ public class TodoActivity extends Activity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				String item_description = items.get(position);
-				removeItem(TodoItemsList.get(position));
-				items.remove(position);
+				String item_description = itemsAdapter.getItem(position).getDescription();
+				itemsAdapter.removeTodoItem(position);
 				itemsAdapter.notifyDataSetChanged();
-				Toast.makeText(getApplication(), "Removed " + item_description, Toast.LENGTH_SHORT).show();
+				Toast.makeText(getApplication(), "Removed!", Toast.LENGTH_SHORT).show();
 				return false;
 			}
 		});
@@ -83,34 +81,12 @@ public class TodoActivity extends Activity {
     	if(resultCode == RESULT_OK && requestCode == REQUEST_CODE){
     		String item_desc = data.getExtras().getString("updated_item_description");
     		int position = data.getExtras().getInt("item_position");
-    		items.set(position, item_desc);
+    		TodoItem t = itemsAdapter.getItem(position);
+    		itemsAdapter.updateItem(t, item_desc, false);
     		itemsAdapter.notifyDataSetChanged();
-    		updateItem(TodoItemsList.get(position), item_desc, false);
+    		
     	}
     }
-    
-    private void readItems() {
-    	items = new ArrayList<String>();
-    	TodoItemsList = (ArrayList<TodoItem>) itemsDAO.getAllTodoItems();
-    	for (TodoItem t : TodoItemsList) {
-    		items.add(t.getDescription());
-		}
-    }
-    
-    private void saveNewItem(TodoItem t) {
-    	itemsDAO.addTodoItem(t);
-    	TodoItemsList.add(t);
-    }
-    
-    private void removeItem(TodoItem t) {
-    	itemsDAO.removeTodoItem(t);
-    	TodoItemsList.remove(t);
-    }
-    
-    private void updateItem(TodoItem t, String desc, Boolean completed) {
-    	t.setDescription(desc);
-    	t.markCompleted(completed);
-    	itemsDAO.updateTodoItem(t);
-    }
+   
     
 }
