@@ -6,5 +6,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="api_failure_message">Failed to get popular photos from Instagram. :(</string>
+    <string name="caption_default_text">This is a default caption.</string>
 
 </resources>

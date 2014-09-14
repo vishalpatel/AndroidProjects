@@ -1,31 +1,45 @@
 package com.codepath.vik.instapopviewer;
 
-import org.apache.http.Header;
-import org.json.JSONObject;
+import java.util.ArrayList;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
+import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 
 
 public class PhotosActivity extends Activity {
 	public static final String CLIENT_ID = "a6a9a86df296447db1abcb1878a045c6";
+	private ArrayList<InstagramPhoto> photos;
+	private InstagramPhotosAdapter aPhotos;
+	private ListView lvPhotos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photos);
+        lvPhotos = (ListView) findViewById(R.id.lvPhotos);
         fetchPopularPhotos();
     }
 
 
     private void fetchPopularPhotos() {
+    	photos = new ArrayList<InstagramPhoto>();
+    	aPhotos = new InstagramPhotosAdapter(this, photos);
+    	// populate the data into the listview
+    	lvPhotos.setAdapter(aPhotos);
+    	
 		// https://api.instagram.com/v1/media/popular?client_id=<clientid>
     	// id = a6a9a86df296447db1abcb1878a045c6
     	// {"data" => [x] => "images" => "standard_resolution" => "url" }
@@ -46,8 +60,22 @@ public class PhotosActivity extends Activity {
     			super.onSuccess(statusCode, headers, response);
     			// fired when successful results
     			// response is json_response from instagram
-    			// {"data" => [x] => "images" => "standard_resolution" => "url" }
-    			Log.i("INFO", response.toString());
+    			JSONArray photosJSON = null;
+    			try {
+    				photos.clear();
+					photosJSON = response.getJSONArray("data");
+					for (int i = 0; i< photosJSON.length(); i++) {
+						JSONObject photoObject = photosJSON.getJSONObject(i);
+						InstagramPhoto photo = new InstagramPhoto(photoObject);
+						photos.add(photo);
+					}
+				} catch (JSONException e) {
+					// this will fire if json  
+					e.printStackTrace();
+				}
+    			//Log.i("INFO", response.toString());
+    			aPhotos.notifyDataSetChanged();
+
     		}
     		
     		@Override
