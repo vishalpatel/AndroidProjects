@@ -43,6 +43,9 @@ public class InstagramPhoto {
 	}
 	
 	public String getHumanizedLikeCount() {
-		return Integer.toString(this.likesCount) + " Likes";
+		if (this.likesCount < 1000) {
+			return Integer.toString(this.likesCount) + " Likes"; 
+		}
+		return Integer.toString(this.likesCount/1000) + "K Likes";
 	}
 }
