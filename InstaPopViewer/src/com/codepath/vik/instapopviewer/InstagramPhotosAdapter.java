@@ -15,6 +15,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
+	private static class InstagramPhotoViewHolder {
+		ImageView imgPhoto, imgProfilePicture;
+		TextView tvCaption, tvUserName, tvLikeCount;
+	}
+
 	public InstagramPhotosAdapter(Context context, List<InstagramPhoto> photos) {
 		super(context, android.R.layout.simple_list_item_1, photos);
 	}
@@ -24,39 +29,44 @@ public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
+		InstagramPhotoViewHolder viewHolder;
 		// get the data from source
 		InstagramPhoto photo = getItem(position);
 		
 		// check if we are using recycled view
 		if (convertView == null) {
+			viewHolder = new InstagramPhotoViewHolder();
 			convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_photo, parent, false);
+			viewHolder.tvCaption = (TextView) convertView.findViewById(R.id.tvCaption);
+			viewHolder.tvLikeCount = (TextView) convertView.findViewById(R.id.tvLikeCount);
+			viewHolder.tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
+			viewHolder.imgPhoto = (ImageView) convertView.findViewById(R.id.imgPhoto);
+			viewHolder.imgProfilePicture = (ImageView) convertView.findViewById(R.id.imgUserProfilePhoto);
+			convertView.setTag(viewHolder);
+		} else {
+			viewHolder = (InstagramPhotoViewHolder) convertView.getTag();
 		}
-		// Lookup view subviews
-		TextView tvCaption = (TextView) convertView.findViewById(R.id.tvCaption);
-		ImageView imgPhoto = (ImageView) convertView.findViewById(R.id.imgPhoto);
-		TextView tvLikeCount = (TextView) convertView.findViewById(R.id.tvLikeCount);
-		TextView tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
-		
+
 		
 		// populate subviews with image and text with correct data
-		tvCaption.setText(photo.caption);
-		tvUserName.setText("By: " + photo.userName);
-		tvUserName.setTextColor(android.graphics.Color.argb(250, 0xF0, 0xAA, 0x52));
-		tvLikeCount.setText(photo.getHumanizedLikeCount());
-		tvLikeCount.setTextColor(android.graphics.Color.argb(200, 0xBD, 0xBD, 0xBD));
+		viewHolder.tvCaption.setText(photo.caption);
+		viewHolder.tvUserName.setText(photo.userName);
+		viewHolder.tvUserName.setTextColor(android.graphics.Color.argb(250, 0xF0, 0xAA, 0x52));
+		viewHolder.tvLikeCount.setText(photo.getHumanizedLikeCount());
+		viewHolder.tvLikeCount.setTextColor(android.graphics.Color.argb(200, 0xBD, 0xBD, 0xBD));
 		//tvLikeCount.setTextColor(android.graphics.Color.argb(200, 0x2F, 0x86, 0xAA));
-		imgPhoto.getLayoutParams().height = photo.imageHeight;
+		viewHolder.imgPhoto.getLayoutParams().height = photo.imageHeight;
 		
 		//since this may be recycled, better reset the image from previous View.
-		imgPhoto.setImageResource(0);
-		
+		viewHolder.imgPhoto.setImageResource(0);
+		viewHolder.imgProfilePicture.setImageResource(R.drawable.default_loading);
 		
 		// ask for the photo to be added to image view based on the photo url
 		// send a network request to the url, download the image bytes (optionally resize the image)
 		// convert to bitmap
 		// insert bitmap to imageview
-		Picasso.with(getContext()).load(photo.imageURL).into(imgPhoto);
+		Picasso.with(getContext()).load(photo.imageURL).into(viewHolder.imgPhoto);
+		Picasso.with(getContext()).load(photo.userProfileImageUrl).into(viewHolder.imgProfilePicture);
 		// return the view created
 		return convertView;
 	}

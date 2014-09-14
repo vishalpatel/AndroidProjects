@@ -7,6 +7,8 @@ public class InstagramPhoto {
 	public String userName;
 	public String caption;
 	public String imageURL;
+	public String userProfileImageUrl;
+	
 	public int imageHeight;
 	public int likesCount;
 	
@@ -23,6 +25,7 @@ public class InstagramPhoto {
 		// {"data" => [x] => "user" => "username"}
 		// {"data" => [x] => "caption" => "text"}
 		userName = jsonObject.getJSONObject("user").getString("username");
+		userProfileImageUrl = jsonObject.getJSONObject("user").getString("profile_picture");
 		if (jsonObject.getJSONObject("caption") != null) {
 			caption = jsonObject.getJSONObject("caption").getString("text");
 		}
@@ -30,6 +33,7 @@ public class InstagramPhoto {
 		imageURL = stdImageObject.getString("url");
 		imageHeight = stdImageObject.getInt("height");
 		likesCount = jsonObject.getJSONObject("likes").getInt("count");
+		
 	}
 	
 	@Override
