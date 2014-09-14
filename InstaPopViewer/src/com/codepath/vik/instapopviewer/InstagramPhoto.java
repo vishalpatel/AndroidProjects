@@ -26,8 +26,10 @@ public class InstagramPhoto {
 		// {"data" => [x] => "caption" => "text"}
 		userName = jsonObject.getJSONObject("user").getString("username");
 		userProfileImageUrl = jsonObject.getJSONObject("user").getString("profile_picture");
-		if (jsonObject.getJSONObject("caption") != null) {
+		if (jsonObject.has("caption")) {
 			caption = jsonObject.getJSONObject("caption").getString("text");
+		}else {
+			caption = "";
 		}
 		JSONObject stdImageObject = jsonObject.getJSONObject("images").getJSONObject("standard_resolution");
 		imageURL = stdImageObject.getString("url");
