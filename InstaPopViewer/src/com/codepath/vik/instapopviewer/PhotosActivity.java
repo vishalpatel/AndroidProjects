@@ -82,12 +82,15 @@ public class PhotosActivity extends Activity {
 					photosJSON = response.getJSONArray("data");
 					for (int i = 0; i < photosJSON.length(); i++) {
 						JSONObject photoObject = photosJSON.getJSONObject(i);
-						InstagramPhoto photo = new InstagramPhoto(photoObject);
-						photos.add(photo);
+						if (photoObject != null) {
+							InstagramPhoto photo = new InstagramPhoto(photoObject);
+							photos.add(photo);
+						}
 					}
 				} catch (JSONException e) {
 					// this will fire if json
 					Log.e("ERROR", response.toString());
+					//Log.e("ERROR", Integer.toString(i));
 					e.printStackTrace();
 				}
 				// Log.i("INFO", response.toString());

@@ -9,5 +9,6 @@ Completed User stories:
   * [x] Create list view with photos from Instagram.
   * [x] Show comment, user name and like count
   * [x] show user profile picture too
-
+Optional user stories:
+  * [x] Pull to refresh
 ![Demo](basic_demo1.gif)
