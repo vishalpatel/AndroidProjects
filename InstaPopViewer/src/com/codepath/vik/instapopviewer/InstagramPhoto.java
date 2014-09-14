@@ -37,4 +37,8 @@ public class InstagramPhoto {
 		// TODO Auto-generated method stub
 		return userName + imageURL;
 	}
+	
+	public String getHumanizedLikeCount() {
+		return Integer.toString(this.likesCount) + " Likes";
+	}
 }

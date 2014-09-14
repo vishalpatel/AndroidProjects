@@ -70,7 +70,8 @@ public class PhotosActivity extends Activity {
 						photos.add(photo);
 					}
 				} catch (JSONException e) {
-					// this will fire if json  
+					// this will fire if json 
+					Log.e("ERROR", response.toString());
 					e.printStackTrace();
 				}
     			//Log.i("INFO", response.toString());

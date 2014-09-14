@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.squareup.picasso.Picasso;
 
+import android.R.color;
 import android.content.Context;
+import android.text.AndroidCharacter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,13 +35,21 @@ public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
 		// Lookup view subviews
 		TextView tvCaption = (TextView) convertView.findViewById(R.id.tvCaption);
 		ImageView imgPhoto = (ImageView) convertView.findViewById(R.id.imgPhoto);
+		TextView tvLikeCount = (TextView) convertView.findViewById(R.id.tvLikeCount);
+		TextView tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
+		
 		
 		// populate subviews with image and text with correct data
 		tvCaption.setText(photo.caption);
+		tvUserName.setText("By: " + photo.userName);
+		tvUserName.setTextColor(android.graphics.Color.argb(250, 0xF0, 0xAA, 0x52));
+		tvLikeCount.setText(photo.getHumanizedLikeCount());
+		tvLikeCount.setTextColor(android.graphics.Color.argb(200, 0xBD, 0xBD, 0xBD));
+		//tvLikeCount.setTextColor(android.graphics.Color.argb(200, 0x2F, 0x86, 0xAA));
 		imgPhoto.getLayoutParams().height = photo.imageHeight;
 		
 		//since this may be recycled, better reset the image from previous View.
-		imgPhoto.setImageResource(R.drawable.ic_launcher);
+		imgPhoto.setImageResource(0);
 		
 		
 		// ask for the photo to be added to image view based on the photo url
@@ -50,5 +60,4 @@ public class InstagramPhotosAdapter extends ArrayAdapter<InstagramPhoto> {
 		// return the view created
 		return convertView;
 	}
-
 }
