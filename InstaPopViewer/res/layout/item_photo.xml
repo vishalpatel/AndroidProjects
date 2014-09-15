@@ -18,9 +18,9 @@
 
     <TextView
         android:id="@+id/tvCaption"
-        android:layout_marginTop="-30dp"
+        android:layout_marginTop="-36dp"
         android:alpha="0.8"
-        android:minHeight="30dp"
+        android:minHeight="36dp"
         android:background="@android:color/darker_gray"
         android:textColor="@android:color/white"
         android:layout_width="match_parent"
@@ -36,10 +36,10 @@
         android:id="@+id/imgUserProfilePhoto"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_marginTop="2dp"
         android:maxWidth="32dp"
         android:maxHeight="32dp"
         android:scaleType="fitXY"
+        android:padding="1dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/tvCaption"
         android:src="@drawable/default_loading" />
@@ -63,5 +63,14 @@
         android:layout_toRightOf="@+id/imgUserProfilePhoto"
         android:layout_marginLeft="5dp"
         android:text="@string/like_count_default_string" />
+
+    <TextView
+        android:id="@+id/tvComment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/imgUserProfilePhoto"
+        android:text="@string/caption_default_text" />
 
 </RelativeLayout>

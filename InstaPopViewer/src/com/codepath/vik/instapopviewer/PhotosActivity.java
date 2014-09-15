@@ -39,7 +39,7 @@ public class PhotosActivity extends Activity {
 		lvPhotos.setAdapter(aPhotos);
 
 		fetchPopularPhotos();
-		
+
 		swipeContainer.setOnRefreshListener(new OnRefreshListener() {
 
 			@Override
@@ -54,7 +54,7 @@ public class PhotosActivity extends Activity {
 	}
 
 	private void fetchPopularPhotos() {
-		
+
 		// https://api.instagram.com/v1/media/popular?client_id=<clientid>
 		// id = a6a9a86df296447db1abcb1878a045c6
 		// {"data" => [x] => "images" => "standard_resolution" => "url" }
@@ -77,21 +77,32 @@ public class PhotosActivity extends Activity {
 				// fired when successful results
 				// response is json_response from instagram
 				JSONArray photosJSON = null;
-				try {
-					photos.clear();
-					photosJSON = response.getJSONArray("data");
+				photos.clear();
+				if (response.has("data")) {
+					try {
+						photosJSON = response.getJSONArray("data");
+					} catch (JSONException e1) {
+						Toast.makeText(getApplicationContext(),
+								"Failed to load Instagram photos :(",
+								Toast.LENGTH_SHORT).show();
+						e1.printStackTrace();
+					}
 					for (int i = 0; i < photosJSON.length(); i++) {
-						JSONObject photoObject = photosJSON.getJSONObject(i);
-						if (photoObject != null) {
-							InstagramPhoto photo = new InstagramPhoto(photoObject);
-							photos.add(photo);
+						try {
+							JSONObject photoObject = photosJSON
+									.getJSONObject(i);
+							if (photoObject != null) {
+								InstagramPhoto photo = new InstagramPhoto(
+										photoObject);
+								photos.add(photo);
+							}
+						} catch (JSONException e) {
+							// this will fire if json
+							Log.e("ERROR", response.toString());
+							// Log.e("ERROR", Integer.toString(i));
+							e.printStackTrace();
 						}
 					}
-				} catch (JSONException e) {
-					// this will fire if json
-					Log.e("ERROR", response.toString());
-					//Log.e("ERROR", Integer.toString(i));
-					e.printStackTrace();
 				}
 				// Log.i("INFO", response.toString());
 				aPhotos.notifyDataSetChanged();

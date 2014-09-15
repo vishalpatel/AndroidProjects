@@ -9,5 +9,6 @@
     <string name="caption_default_text">This is a default caption.</string>
     <string name="like_count_default_string">0 Likes</string>
     <string name="default_user_name">-By Unknown</string>
-
+	<string name="orange_heart_emoji">💛</string>
+	<string name="pink_heart_emoji">💖</string>
 </resources>
