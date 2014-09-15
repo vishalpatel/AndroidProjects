@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">InstaPopViewer</string>
+    <string name="popular_photos_caption">Popular Photos</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="api_failure_message">Failed to get popular photos from Instagram. :(</string>
+    <string name="caption_default_text">This is a default caption.</string>
+    <string name="like_count_default_string">0 Likes</string>
+    <string name="default_user_name">-By Unknown</string>
+	<string name="orange_heart_emoji">💛</string>
+	<string name="pink_heart_emoji">💖</string>
+</resources>
