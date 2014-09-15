@@ -1,7 +1,7 @@
 Instagram Popular Photo viewer Demo
 (A simple photo viewer for popular photos in Instagram)
 
-Time spent: 8hrs
+Time spent: 12hrs
 
 Completed User stories:
 
@@ -11,4 +11,7 @@ Completed User stories:
   * [x] show user profile picture too
 Optional user stories:
   * [x] Pull to refresh
+  * [x] Comment shown for pictures.
+
 ![Demo](basic_demo1.gif)
+![Another Demo](ptrf_cmnt_demo.gif)
