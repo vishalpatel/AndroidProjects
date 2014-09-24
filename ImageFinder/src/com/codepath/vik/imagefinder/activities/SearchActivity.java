@@ -13,12 +13,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.codepath.vik.imagefinder.R;
@@ -31,13 +35,14 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 
 public class SearchActivity extends Activity {
 	static private int UPDATE_FILTERS = 500;
-	private EditText etQuery;
+	private TextView etQuery;
 	private GridView gvResults;
 	private ArrayList<ImageResult> imageResults;
 	private ImageResultsAdapter aImageResults;
 	private String searchQuery;
 
 	private SearchFilter searchFilterSettings;
+	private SearchView searchView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +57,7 @@ public class SearchActivity extends Activity {
 	}
 
 	private void setupViews() {
-		etQuery = (EditText) findViewById(R.id.etQuery);
+		etQuery = (TextView) findViewById(R.id.etQuery);
 		gvResults = (GridView) findViewById(R.id.gvResults);
 		gvResults.setOnItemClickListener(new OnItemClickListener() {
 
@@ -93,6 +98,7 @@ public class SearchActivity extends Activity {
 	}
 
 	public void loadSearchResults(int page) {
+		etQuery.setText("Search results for " + searchQuery);
 		AsyncHttpClient client = new AsyncHttpClient();
 		// https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=fall&rsz=8
 		String searchUrl = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&"
@@ -138,13 +144,7 @@ public class SearchActivity extends Activity {
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.search, menu);
-		return true;
-	}
-
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
@@ -173,5 +173,28 @@ public class SearchActivity extends Activity {
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.search, menu);
+	    MenuItem searchItem = menu.findItem(R.id.action_search);
+	    searchView = (SearchView) searchItem.getActionView();
+	    searchView.setOnQueryTextListener(new OnQueryTextListener() {
+	       @Override
+	       public boolean onQueryTextSubmit(String query) {
+	            // perform query here
+	    	   searchQuery = query;
+	    	   loadSearchResults(0);
+	            return true;
+	       }
+
+	       @Override
+	       public boolean onQueryTextChange(String newText) {
+	           return false;
+	       }
+	   });
+	   return super.onCreateOptionsMenu(menu);
 	}
 }

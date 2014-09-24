@@ -4,30 +4,19 @@
     android:layout_height="match_parent"
     tools:context="com.codepath.vik.imagefinder.activities.SearchActivity" >
 
-    <EditText
+    <TextView
         android:id="@+id/etQuery"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="20dp"
-        android:layout_toLeftOf="@+id/btnSearch"
-        android:ems="10"
-        android:hint="@string/hint_search_images" />
-
-    <Button
-        android:id="@+id/btnSearch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:onClick="onImageSearch"
-        android:layout_alignBottom="@+id/etQuery"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="20dp"
-
-        android:text="@string/btn_search" />
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:minHeight="20dp"
+        android:text="@string/hint_search_images" />
 
     <GridView
         android:id="@+id/gvResults"
