@@ -4,6 +4,15 @@
     android:layout_height="match_parent"
     tools:context="com.codepath.vik.imagefinder.activities.ImageDisplay" >
 
+    <TextView
+        android:id="@+id/tvSearchHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="@string/loading_image"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+    
     <ImageView
         android:id="@+id/ivImageFullView"
         android:layout_width="wrap_content"
@@ -16,5 +25,6 @@
         android:scaleType="centerInside"
         android:adjustViewBounds="true"
         android:src="@drawable/ic_launcher" />
+
 
 </RelativeLayout>

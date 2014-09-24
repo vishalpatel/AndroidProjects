@@ -1,7 +1,7 @@
 Google Search Image viewer for Android
 (A simple grid view based image search for google images)
 
-Time spent: 8hrs
+Time spent: 12hrs
 
 Completed User stories:
 
@@ -14,6 +14,9 @@ Completed User stories:
  
 Optional user stories:
 
+  * [x] User can share picture from image detail view
+  * [x] Search from the Action bar
+
   
 
 Dependencies on libraries:
@@ -21,6 +24,11 @@ Dependencies on libraries:
 I used android-async-http library for asynchronous HTTP request handling. And picasso library for loading images. 
  
 Demo
+
+![Image search Optionals improved Demo](optionals_demo.gif)
+
+
+Basic submission
 
 ![Image search Basic Demo](endless_scroll.gif)
 

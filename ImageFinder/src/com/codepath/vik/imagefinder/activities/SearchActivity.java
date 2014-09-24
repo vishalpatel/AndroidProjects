@@ -40,6 +40,7 @@ public class SearchActivity extends Activity {
 	private ArrayList<ImageResult> imageResults;
 	private ImageResultsAdapter aImageResults;
 	private String searchQuery;
+	private TextView tvSearchHint;
 
 	private SearchFilter searchFilterSettings;
 	private SearchView searchView;
@@ -57,6 +58,7 @@ public class SearchActivity extends Activity {
 	}
 
 	private void setupViews() {
+		tvSearchHint = (TextView) findViewById(R.id.tvSearchHint);
 		etQuery = (TextView) findViewById(R.id.etQuery);
 		gvResults = (GridView) findViewById(R.id.gvResults);
 		gvResults.setOnItemClickListener(new OnItemClickListener() {
@@ -98,6 +100,7 @@ public class SearchActivity extends Activity {
 	}
 
 	public void loadSearchResults(int page) {
+		tvSearchHint.setVisibility(View.INVISIBLE);
 		etQuery.setText("Search results for " + searchQuery);
 		AsyncHttpClient client = new AsyncHttpClient();
 		// https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=fall&rsz=8
@@ -108,6 +111,7 @@ public class SearchActivity extends Activity {
 		if (page == 0) {
 			aImageResults.clear(); // clear this only when its new
 									// search
+			tvSearchHint.setVisibility(View.VISIBLE);
 		} else {
 			searchUrl += "&start=" + Integer.toString(page*8);
 		}
