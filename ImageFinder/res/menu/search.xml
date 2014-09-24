@@ -7,5 +7,11 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
+    <item android:id="@+id/miEditFilters"
+        android:showAsAction="always"
+        android:title="Filter"
+        android:onClick="onEditFilersAction"
+        android:icon="@drawable/ic_action_filter_settings"
+        />
 
 </menu>

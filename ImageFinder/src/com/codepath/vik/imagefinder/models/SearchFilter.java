@@ -46,4 +46,5 @@ public class SearchFilter implements Serializable {
 		
 		return true;
 	}
+
 }
