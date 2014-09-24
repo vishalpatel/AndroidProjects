@@ -1,0 +1,83 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.codepath.vik.imagefinder.activities.SearchFiltersActivity" >
+
+    <TextView
+        android:id="@+id/tvAdvancedSearch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:text="@string/adv_search_options"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/tvFiltImgSize"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tvAdvancedSearch"
+        android:text="@string/image_size" />
+
+    <Spinner
+        android:id="@+id/spSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tvFiltImgSize"
+        android:layout_toRightOf="@+id/tvFiltImgSize"
+        android:entries="@array/filter_size_options"
+        android:prompt="@string/filter_size_title" />
+
+    <TextView
+        android:id="@+id/tvFiltImgColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvFiltImgSize"
+        android:layout_below="@+id/tvFiltImgSize"
+        android:text="@string/color_filter" />
+
+    <Spinner
+        android:id="@+id/spColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tvFiltImgColor"
+        android:layout_toRightOf="@+id/tvFiltImgColor"
+        android:entries="@array/filter_color_options"
+        android:prompt="@string/filter_color_title" />
+
+    <TextView
+        android:id="@+id/tvFiltImgType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvFiltImgColor"
+        android:layout_below="@+id/tvFiltImgColor"
+        android:text="@string/image_type" />
+
+    <Spinner
+        android:id="@+id/spType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/tvFiltImgType"
+        android:layout_toRightOf="@+id/tvFiltImgType"
+        android:entries="@array/filter_type_options"
+        android:prompt="@string/filter_type_title" />
+
+    <TextView
+        android:id="@+id/tvFiltSite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tvFiltImgType"
+        android:layout_below="@+id/tvFiltImgType"
+        android:text="@string/site_filter" />
+
+</RelativeLayout>
