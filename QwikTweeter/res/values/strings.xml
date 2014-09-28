@@ -8,5 +8,7 @@
     <string name="login_label">Log in</string>
     <string name="connect_to_twitter">Connect to Twitter</string>
     <string name="title_activity_timeline">TimelineActivity</string>
+    <string name="textbody_placeholder">This is a text tweet</string>
+    <string name="screen_name_placeholder">\@foo</string>
 
 </resources>

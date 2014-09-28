@@ -17,7 +17,7 @@ public class TimelineActivity extends Activity {
 	private TwitterClient client;
 	private ListView lvTweets;
 	private ArrayList<Tweet> tweets;
-	private ArrayAdapter<Tweet> aTweets;
+	private TweetsArrayAdapter aTweets;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class TimelineActivity extends Activity {
 		client = QwikTweeterApplication.getRestClient();
 		lvTweets = (ListView) findViewById(R.id.lvTweets);
 		tweets = new ArrayList<Tweet>();
-		aTweets = new ArrayAdapter<Tweet>(this, android.R.layout.simple_list_item_1, tweets);
+		aTweets = new TweetsArrayAdapter(this, tweets);
 		lvTweets.setAdapter(aTweets);
 		populateTimeline();
 	}
