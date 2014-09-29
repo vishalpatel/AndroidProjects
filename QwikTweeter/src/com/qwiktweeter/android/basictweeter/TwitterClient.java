@@ -23,6 +23,8 @@ import com.loopj.android.http.RequestParams;
  * 
  */
 public class TwitterClient extends OAuthBaseClient {
+	public static final int GET_NEW_TWEETS = 1;
+	public static final int GET_MORE_TWEETS = 2;
 	public static final Class<? extends Api> REST_API_CLASS = TwitterApi.class; // Change this
 	public static final String REST_URL = "https://api.twitter.com/1.1"; // Change this, base API URL
 	public static final String REST_CONSUMER_KEY = "AKaZCXKbFSghNjTZ4FopRp2Xw";       // Change this
@@ -33,13 +35,30 @@ public class TwitterClient extends OAuthBaseClient {
 		super(context, REST_API_CLASS, REST_URL, REST_CONSUMER_KEY, REST_CONSUMER_SECRET, REST_CALLBACK_URL);
 	}
 
-	public void getHomeTimeline(AsyncHttpResponseHandler handler){
+	public void getHomeTimeline(int mode, long tweet_id, AsyncHttpResponseHandler handler){
 		String apiUrl = getApiUrl("statuses/home_timeline.json");
 		RequestParams params = new RequestParams();
-		params.put("since_id", "1");
+		if (mode == GET_NEW_TWEETS) {
+			params.put("since_id", Long.toString(tweet_id));
+		}else
+		{
+			params.put("max_id", Long.toString(tweet_id));
+		}
+		
 		client.get(apiUrl, params, handler);
 	}
 	
+	public void postTweet(String tweetText, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("statuses/update.json");
+		RequestParams param = new RequestParams();
+		param.put("status", tweetText);
+		client.post(apiUrl, param, handler);
+	}
+	
+	public void getAccountInfo(AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("account/verify_credentials.json");
+		client.get(apiUrl, handler);
+	}
 	/*
 	// CHANGE THIS
 	// DEFINE METHODS for different API endpoints here

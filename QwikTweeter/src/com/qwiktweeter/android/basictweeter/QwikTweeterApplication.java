@@ -5,6 +5,7 @@ import android.content.Context;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.qwiktweeter.android.basictweeter.models.User;
 
 /*
  * This is the Android application itself and is used to configure various settings
@@ -17,6 +18,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
  */
 public class QwikTweeterApplication extends com.activeandroid.app.Application {
 	private static Context context;
+	private static User currentUser = null;
 
 	@Override
 	public void onCreate() {
@@ -34,5 +36,13 @@ public class QwikTweeterApplication extends com.activeandroid.app.Application {
 
 	public static TwitterClient getRestClient() {
 		return (TwitterClient) TwitterClient.getInstance(TwitterClient.class, QwikTweeterApplication.context);
+	}
+
+	public static User getCurrentUser() {
+		return currentUser;
+	}
+
+	public static void setCurrentUser(User currentUser) {
+		QwikTweeterApplication.currentUser = currentUser;
 	}
 }

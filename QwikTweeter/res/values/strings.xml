@@ -10,5 +10,8 @@
     <string name="title_activity_timeline">TimelineActivity</string>
     <string name="textbody_placeholder">This is a text tweet</string>
     <string name="screen_name_placeholder">\@foo</string>
+    <string name="compose">Compose</string>
+    <string name="title_activity_post_tweet">PostTweetActivity</string>
+    <string name="post">Post</string>
 
 </resources>
