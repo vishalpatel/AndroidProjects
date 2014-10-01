@@ -59,6 +59,13 @@ public class TwitterClient extends OAuthBaseClient {
 		String apiUrl = getApiUrl("account/verify_credentials.json");
 		client.get(apiUrl, handler);
 	}
+	
+	public void postFavoriteATweet(long tweet_id, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("favorites/create.json");
+		RequestParams params = new RequestParams();
+		params.put("id", Long.toString(tweet_id));
+		client.put(apiUrl, params, handler);
+	}
 	/*
 	// CHANGE THIS
 	// DEFINE METHODS for different API endpoints here

@@ -1,5 +1,6 @@
 package com.qwiktweeter.android.basictweeter.models;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -14,7 +15,11 @@ import org.json.JSONObject;
  following: [x]=>user=>following
 
  */
-public class User {
+public class User implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5525042597868378940L;
 	private String name;
 	private long uid;
 	private String screenName;

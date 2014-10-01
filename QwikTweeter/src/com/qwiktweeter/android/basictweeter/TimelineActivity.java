@@ -60,6 +60,15 @@ public class TimelineActivity extends Activity {
 				android.R.color.holo_orange_light,
 				android.R.color.holo_red_light);
 		populateTimeline(TwitterClient.GET_NEW_TWEETS);
+		
+		lvTweets.setOnScrollListener(new EndlessScrollListener() {
+			
+			@Override
+			public void onLoadMore(int page, int totalItemsCount) {
+				populateTimeline(TwitterClient.GET_MORE_TWEETS);
+				
+			}
+		});
 	}
 
 	public void populateTimeline(int mode) {
@@ -68,7 +77,10 @@ public class TimelineActivity extends Activity {
 		if (mode == TwitterClient.GET_NEW_TWEETS) {
 			tweet_id = newestTweetID + 1;
 		} else {
-			tweet_id = oldestTweetID;
+			tweet_id = oldestTweetID - 1;
+			if (tweet_id < 0) {
+				tweet_id = 0;
+			}
 		}
 
 		client.getHomeTimeline(mode, tweet_id, new JsonHttpResponseHandler() {
@@ -118,6 +130,26 @@ public class TimelineActivity extends Activity {
 		startActivityForResult(i, POST_REQ);
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == POST_REQ) {
+			if (resultCode == RESULT_OK) {
+				// pull out the id of the post 
+				/*
+				Tweet newTweet = (Tweet) data.getSerializableExtra("posted_tweet");
+				ArrayList<Tweet> oldtweets = new ArrayList<Tweet>(tweets);
+				aTweets.clear();
+				aTweets.add(newTweet);
+				aTweets.addAll(oldtweets);
+				lvTweets.scrollTo(0, 0);
+				*/
+				populateTimeline(TwitterClient.GET_NEW_TWEETS);
+				lvTweets.setSelectionAfterHeaderView();
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
