@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -15,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
 
@@ -67,6 +67,12 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 											Toast.LENGTH_SHORT).show();
 
 								};
+								@Override
+								public void onFailure(Throwable arg0,
+										String arg1) {
+									Log.e("error", arg1);
+									
+								}
 							});
 
 				}
@@ -84,6 +90,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 			vh = (ViewHolder) convertView.getTag();
 		}
 		vh.ivProfileImage.setImageResource(0);
+		vh.ivTweetMedia.setImageResource(android.R.color.transparent);
+		vh.ivTweetMedia.forceLayout();
 		vh.ivTweetMedia.setImageResource(0);
 
 		vh.tvFavorieCount.setTag(t);
@@ -104,7 +112,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 			vh.ivTweetMedia.setScaleType(t.getMediaPhotoScaleType());
 			vh.ivTweetMedia.setAdjustViewBounds(true);
 			imageLoader.displayImage(t.getMediaImageUrl(), vh.ivTweetMedia);
-
+		}else {
+			
 		}
 		return convertView;
 	}
