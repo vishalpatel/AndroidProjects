@@ -1,11 +1,15 @@
 package com.qwiktweeter.android.basictweeter;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.json.JSONArray;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -16,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.qwiktweeter.android.basictweeter.Persistance.PersistenceTask;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
 
 public class TimelineActivity extends Activity {
@@ -60,13 +65,13 @@ public class TimelineActivity extends Activity {
 				android.R.color.holo_orange_light,
 				android.R.color.holo_red_light);
 		populateTimeline(TwitterClient.GET_NEW_TWEETS);
-		
+
 		lvTweets.setOnScrollListener(new EndlessScrollListener() {
-			
+
 			@Override
 			public void onLoadMore(int page, int totalItemsCount) {
 				populateTimeline(TwitterClient.GET_MORE_TWEETS);
-				
+
 			}
 		});
 	}
@@ -81,6 +86,11 @@ public class TimelineActivity extends Activity {
 			if (tweet_id < 0) {
 				tweet_id = 0;
 			}
+		}
+		if (!isNetworkAvailable()) {
+			if (tweets.size() == 0)
+				aTweets.addAll(Tweet.getAll());
+			return;
 		}
 
 		client.getHomeTimeline(mode, tweet_id, new JsonHttpResponseHandler() {
@@ -112,6 +122,7 @@ public class TimelineActivity extends Activity {
 						oldestTweetID = t.getUid();
 					}
 				}
+				Persistance.saveAll(null, tweetArr);
 				swipeContainer.setRefreshing(false);
 			}
 
@@ -134,22 +145,21 @@ public class TimelineActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == POST_REQ) {
 			if (resultCode == RESULT_OK) {
-				// pull out the id of the post 
+				// pull out the id of the post
 				/*
-				Tweet newTweet = (Tweet) data.getSerializableExtra("posted_tweet");
-				ArrayList<Tweet> oldtweets = new ArrayList<Tweet>(tweets);
-				aTweets.clear();
-				aTweets.add(newTweet);
-				aTweets.addAll(oldtweets);
-				lvTweets.scrollTo(0, 0);
-				*/
+				 * Tweet newTweet = (Tweet)
+				 * data.getSerializableExtra("posted_tweet"); ArrayList<Tweet>
+				 * oldtweets = new ArrayList<Tweet>(tweets); aTweets.clear();
+				 * aTweets.add(newTweet); aTweets.addAll(oldtweets);
+				 * lvTweets.scrollTo(0, 0);
+				 */
 				populateTimeline(TwitterClient.GET_NEW_TWEETS);
 				lvTweets.setSelectionAfterHeaderView();
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -157,4 +167,11 @@ public class TimelineActivity extends Activity {
 		return true;
 	}
 
+	public Boolean isNetworkAvailable() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager
+				.getActiveNetworkInfo();
+		return activeNetworkInfo != null
+				&& activeNetworkInfo.isConnectedOrConnecting();
+	}
 }

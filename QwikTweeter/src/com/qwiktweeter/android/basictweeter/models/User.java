@@ -7,6 +7,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
+
 /*
  * username: [x]=>user=>name
  user profile image: [x]=>user=>profile_image_url
@@ -15,19 +19,38 @@ import org.json.JSONObject;
  following: [x]=>user=>following
 
  */
-public class User implements Serializable {
+@Table(name = "Users")
+public class User extends Model implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5525042597868378940L;
-	private String name;
+
+	@Column(name = "uid", unique = true)
 	private long uid;
+
+	@Column(name = "name")
+	private String name;
+
+	@Column(name = "screenName")
 	private String screenName;
+
+	@Column(name = "profileImageUrl")
 	private String profileImageUrl;
+
+	@Column(name = "followersCount")
 	private long followersCount;
+
+	@Column(name = "statusesCount")
 	private long statusesCount;
+
+	@Column(name = "following")
 	private Boolean following;
-	
+
+	public User() {
+		super();
+	}
+
 	public static User fromJSON(JSONObject obj) {
 		User o = new User();
 		// deserialize json object

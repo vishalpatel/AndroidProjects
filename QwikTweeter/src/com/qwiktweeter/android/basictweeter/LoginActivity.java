@@ -1,9 +1,13 @@
 package com.qwiktweeter.android.basictweeter;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
@@ -31,12 +35,32 @@ public class LoginActivity extends OAuthLoginActivity<TwitterClient> {
 	// i.e Display application "homepage"
 	@Override
 	public void onLoginSuccess() {
-		//TBD look for local on disk cache too
+		// TBD look for local on disk cache too
+		SharedPreferences pref = PreferenceManager
+				.getDefaultSharedPreferences(LoginActivity.this);
+		String userjson = pref.getString("userjson", "");
+		if (userjson.length() > 0) {
+			try {
+				User u = User.fromJSON(new JSONObject(userjson));
+				QwikTweeterApplication.setCurrentUser(u);
+				showTimelineActivity();
+				return;
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			};
+		}
 		getClient().getAccountInfo(new JsonHttpResponseHandler() {
 			public void onSuccess(JSONObject obj) {
 				User u = User.fromJSON(obj);
+				SharedPreferences pref = PreferenceManager
+						.getDefaultSharedPreferences(LoginActivity.this);
+				Editor edit = pref.edit();
+				edit.putString("userjson", obj.toString());
+				edit.commit();
 				QwikTweeterApplication.setCurrentUser(u);
 				showTimelineActivity();
+				
 			};
 		});
 		// Toast.makeText(this, "Success, connected to twitter",
@@ -44,10 +68,10 @@ public class LoginActivity extends OAuthLoginActivity<TwitterClient> {
 	}
 
 	public void showTimelineActivity() {
-		Intent i = new Intent(this,
-				TimelineActivity.class);
+		Intent i = new Intent(this, TimelineActivity.class);
 		this.startActivity(i);
 	}
+
 	// OAuth authentication flow failed, handle the error
 	// i.e Display an error dialog or toast
 	@Override

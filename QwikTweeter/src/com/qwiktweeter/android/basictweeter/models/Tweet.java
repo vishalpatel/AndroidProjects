@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.json.JSONArray;
@@ -15,6 +16,12 @@ import android.text.format.DateUtils;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Column.ForeignKeyAction;
+import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
+
 /*
  Text: [x]=>text
  time: [x]=>created_at
@@ -24,20 +31,47 @@ import android.widget.ImageView.ScaleType;
  entities => media => [x]=> type ''== photo''
  entities => media => [x]=> sizes => small => x,y,resize (fit,crop)
  */
-public class Tweet implements Serializable {
+@Table(name = "Tweets")
+public class Tweet extends Model implements Serializable {
 	/**
 	 * 
 	 */
+
 	private static final long serialVersionUID = 1645714390462363725L;
+	@Column(name = "body")
 	private String body;
+
+	@Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
 	private long uid;
+
+	@Column(name = "createdAt")
 	private String createdAt;
-	private User user;
+
+	@Column(name = "media_photo_url")
 	private String media_photo_url = null;
+
 	private static final int MEDIA_RESIZE_FIT = 1, MEDIA_RESIZE_CROP = 2;
-	private int media_size_x = 0, media_size_y = 0, media_size_resize;
+	@Column(name = "media_size_x")
+	private int media_size_x = 0;
+
+	@Column(name = "media_size_y")
+	private int media_size_y = 0;
+
+	@Column(name = "media_size_resize")
+	private int media_size_resize;
+
+	@Column(name = "retweetCount")
 	private long retweetCount;
+
+	@Column(name = "favoriteCount")
 	private long favoriteCount;
+
+	@Column(name = "User", onUpdate = ForeignKeyAction.CASCADE)
+	private User user;
+
+	public Tweet() {
+		super();
+	}
 
 	public static Tweet fromJSON(JSONObject obj) {
 		Tweet o = new Tweet();
@@ -102,6 +136,10 @@ public class Tweet implements Serializable {
 		return datalist;
 	}
 
+	public static List<Tweet> getAll() {
+		return new Select().from(Tweet.class).orderBy("uid DESC").execute();
+	}
+
 	public String toString() {
 		return this.getUser().getScreenName() + " : " + this.getBody();
 	}
@@ -129,8 +167,6 @@ public class Tweet implements Serializable {
 	public long getFavoriteCount() {
 		return favoriteCount;
 	}
-
-	
 
 	public String getCreateTimeAgo() {
 		return String.valueOf(DateUtils
@@ -167,19 +203,20 @@ public class Tweet implements Serializable {
 	public String getMediaImageUrl() {
 		return this.media_photo_url;
 	}
-	
-	public int getMediaPhotoWidth(){
+
+	public int getMediaPhotoWidth() {
 		return this.media_size_x;
 	}
-	
-	public int getMediaPhotoHeight(){
+
+	public int getMediaPhotoHeight() {
 		return this.media_size_y;
 	}
-	
-	public ScaleType getMediaPhotoScaleType(){
+
+	public ScaleType getMediaPhotoScaleType() {
 		if (this.media_size_resize == MEDIA_RESIZE_CROP) {
-		return ImageView.ScaleType.CENTER_CROP;
+			return ImageView.ScaleType.CENTER_CROP;
 		}
 		return ImageView.ScaleType.FIT_XY;
 	}
+
 }
