@@ -58,8 +58,10 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
 				@Override
 				public void onClick(View v) {
+					Tweet t = (Tweet)v.getTag();
+					Log.i("info", "posting a favorite for " + t.toString());
 					QwikTweeterApplication.getRestClient().postFavoriteATweet(
-							((Tweet) v.getTag()).getUid(),
+							t.getUid(),
 							new JsonHttpResponseHandler() {
 								public void onSuccess(int arg0,
 										org.json.JSONObject arg1) {

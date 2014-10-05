@@ -1,6 +1,8 @@
 package com.qwiktweeter.android.basictweeter;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -25,22 +27,26 @@ public class QwikTweeterApplication extends com.activeandroid.app.Application {
 		super.onCreate();
 		QwikTweeterApplication.context = this;
 
-		// Create global configuration and initialize ImageLoader with this configuration
-		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder().
-				cacheInMemory().cacheOnDisc().build();
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext())
-		.defaultDisplayImageOptions(defaultOptions)
-		.build();
+		// Create global configuration and initialize ImageLoader with this
+		// configuration
+		DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
+				.cacheInMemory().cacheOnDisc().build();
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+				getApplicationContext()).defaultDisplayImageOptions(
+				defaultOptions).build();
 		ImageLoader.getInstance().init(config);
 	}
 
 	public static TwitterClient getRestClient() {
-		return (TwitterClient) TwitterClient.getInstance(TwitterClient.class, QwikTweeterApplication.context);
+		return (TwitterClient) TwitterClient.getInstance(TwitterClient.class,
+				QwikTweeterApplication.context);
 	}
 
 	public static User getCurrentUser() {
 		return currentUser;
 	}
+
+
 
 	public static void setCurrentUser(User currentUser) {
 		QwikTweeterApplication.currentUser = currentUser;
