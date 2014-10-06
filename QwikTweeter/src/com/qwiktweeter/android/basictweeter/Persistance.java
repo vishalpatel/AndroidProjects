@@ -7,14 +7,20 @@ import android.os.AsyncTask;
 import android.widget.ProgressBar;
 
 import com.activeandroid.ActiveAndroid;
-import com.activeandroid.Model;
+import com.activeandroid.query.Delete;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
+import com.qwiktweeter.android.basictweeter.models.User;
 
 public class Persistance {
 
 	public static void saveAll(ProgressBar pbar, ArrayList<Tweet> tweetArr) {
 		new PersistenceTask(tweetArr, pbar).execute();
 
+	}
+
+	public static void clearAll() {
+		new Delete().from(Tweet.class).execute();
+		new Delete().from(User.class).execute();
 	}
 
 	public static class PersistenceTask extends AsyncTask<Void, Void, Long> {
@@ -29,12 +35,19 @@ public class Persistance {
 		@Override
 		protected Long doInBackground(Void... params) {
 			ActiveAndroid.beginTransaction();
-			for (Tweet o : objs) {
-				o.getUser().save();
-				o.save();
+			try {
+				for (Tweet o : objs) {
+					o.getUser().save();
+					o.save();
+				}
+				ActiveAndroid.setTransactionSuccessful();
+			}catch (Exception e) {
+				e.printStackTrace();
+				clearAll();
 			}
-			ActiveAndroid.setTransactionSuccessful();
-			ActiveAndroid.endTransaction();
+			finally {
+				ActiveAndroid.endTransaction();
+			}
 			return (long) objs.size();
 		}
 

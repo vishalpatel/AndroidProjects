@@ -3,7 +3,9 @@ package com.qwiktweeter.android.basictweeter.fragments;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import android.app.Fragment;
+import org.json.JSONArray;
+
+import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -13,29 +15,45 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.qwiktweeter.android.basictweeter.EndlessScrollListener;
+import com.qwiktweeter.android.basictweeter.InternetConnectivity;
+import com.qwiktweeter.android.basictweeter.Persistance;
+import com.qwiktweeter.android.basictweeter.QwikTweeterApplication;
 import com.qwiktweeter.android.basictweeter.R;
 import com.qwiktweeter.android.basictweeter.TweetsArrayAdapter;
+import com.qwiktweeter.android.basictweeter.TwitterClient;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
 
-public class TweetsListFragment extends Fragment {
+abstract public class TweetsListFragment extends Fragment {
 
 	private ListView lvTweets;
 	private ArrayList<Tweet> tweets;
 	private TweetsArrayAdapter aTweets;
 	private SwipeRefreshLayout swipeContainer;
 
+	protected TwitterClient client;
+	private long oldestTweetID;
+	private long newestTweetID;
+	private Boolean shouldClear;
+	private int refresh_mode;
 	
+	abstract protected void getTimeline(int mode, long tweet_id,
+			JsonHttpResponseHandler jsonHandler) ;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		tweets = new ArrayList<Tweet>();
 		aTweets = new TweetsArrayAdapter(getActivity(), tweets);
+		client = QwikTweeterApplication.getRestClient();
 
+		oldestTweetID = 0;
+		newestTweetID = 0;
+		refresh_mode = 0;
+		shouldClear = false;
 	}
 
-	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_tweets_list, container,
@@ -51,40 +69,32 @@ public class TweetsListFragment extends Fragment {
 				android.R.color.holo_green_light,
 				android.R.color.holo_orange_light,
 				android.R.color.holo_red_light);
-		swipeContainer.setOnRefreshListener(new OnRefreshListener() {
-
+		
+		
+		setPullToRefreshHandler(new OnRefreshListener() {
 			@Override
 			public void onRefresh() {
-				// TODO Auto-generated method stub
-				Log.e("Error", "Unimplemented method for swipe to refresh.");
-				swipeContainer.setRefreshing(false);
+				populateTimeline(TwitterClient.GET_NEW_TWEETS);
 			}
-			
 		});
-		/*
-		 * swipeContainer.setOnRefreshListener(new OnRefreshListener() {
-		 * 
-		 * @Override public void onRefresh() { // Your code to refresh the list
-		 * here. // Make sure you call swipeContainer.setRefreshing(false) //
-		 * once the network request has completed successfully.
-		 * populateTimeline(TwitterClient.GET_NEW_TWEETS); } });
-		 * 
-		 * populateTimeline(TwitterClient.GET_NEW_TWEETS);
-		 * 
-		 * lvTweets.setOnScrollListener(new EndlessScrollListener() {
-		 * 
-		 * @Override public void onLoadMore(int page, int totalItemsCount) {
-		 * populateTimeline(TwitterClient.GET_MORE_TWEETS);
-		 * 
-		 * } });
-		 */
+
+		setEndlessScrollListener(new EndlessScrollListener() {
+
+			@Override
+			public void onLoadMore(int page, int totalItemsCount) {
+				populateTimeline(TwitterClient.GET_MORE_TWEETS);
+
+			}
+		});
+
+		populateTimeline(TwitterClient.GET_NEW_TWEETS);
 		return v;
 	}
 
 	public void setRefreshingState(Boolean state) {
 		swipeContainer.setRefreshing(state);
 	}
-	
+
 	public void setPullToRefreshHandler(OnRefreshListener listener) {
 		if (listener != null)
 			swipeContainer.setOnRefreshListener(listener);
@@ -109,10 +119,77 @@ public class TweetsListFragment extends Fragment {
 
 	public void setListViewToTop() {
 		lvTweets.setSelectionAfterHeaderView();
-		
+
 	}
 
 	public Collection<? extends Tweet> getAllTweets() {
 		return tweets;
 	}
+	
+	public void populateTimeline(int mode) {
+		refresh_mode = mode;
+		long tweet_id = 1;
+		if (mode == TwitterClient.GET_NEW_TWEETS) {
+			tweet_id = newestTweetID + 1;
+		} else {
+			tweet_id = oldestTweetID - 1;
+			if (tweet_id < 0) {
+				tweet_id = 0;
+			}
+		}
+		if (!InternetConnectivity.getInstance(getActivity()).isConnected()) {
+			if (getListSize() == 0)
+				addAllTweets(Tweet.getAll());
+			return;
+		}
+
+		 JsonHttpResponseHandler jsonHandler = new JsonHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(JSONArray arr) {
+				Log.i("info", arr.toString());
+				ArrayList<Tweet> tweetArr = Tweet.fromJSON(arr);
+
+				if (shouldClear) {
+					clearAllTweets();
+				}
+				if (refresh_mode == TwitterClient.GET_MORE_TWEETS) {
+					addAllTweets(tweetArr);
+				} else {
+					ArrayList<Tweet> oldtweets = new ArrayList<Tweet>(
+							getAllTweets());
+					clearAllTweets();
+					addAllTweets(tweetArr);
+					addAllTweets(oldtweets);
+				}
+				for (Tweet t : tweetArr) {
+					if (t.getUid() > newestTweetID) {
+						newestTweetID = t.getUid();
+					}
+					if (oldestTweetID == 0) {
+						oldestTweetID = t.getUid();
+					}
+					if (t.getUid() < oldestTweetID) {
+						oldestTweetID = t.getUid();
+					}
+				}
+				Persistance.saveAll(null, tweetArr);
+				setRefreshingState(false);
+			}
+
+			@Override
+			public void onFailure(Throwable e, String s) {
+				Log.d("debug", s.toString());
+				Log.d("debug", e.toString());
+			}
+
+		};
+		getTimeline(mode, tweet_id, jsonHandler);
+		
+	}
+
+	
+
+	
+
 }
