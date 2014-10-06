@@ -25,6 +25,8 @@ public class TweetsListFragment extends Fragment {
 	private TweetsArrayAdapter aTweets;
 	private SwipeRefreshLayout swipeContainer;
 
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
