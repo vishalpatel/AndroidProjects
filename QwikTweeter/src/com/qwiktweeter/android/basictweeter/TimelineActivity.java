@@ -6,6 +6,7 @@ import java.util.Collection;
 import org.json.JSONArray;
 
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -21,36 +22,30 @@ import android.widget.ListView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.qwiktweeter.android.basictweeter.Persistance.PersistenceTask;
+import com.qwiktweeter.android.basictweeter.fragments.TweetsListFragment;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
 
 public class TimelineActivity extends Activity {
 	private static int POST_REQ = 51;
 	private TwitterClient client;
-	private ListView lvTweets;
-	private ArrayList<Tweet> tweets;
-	private TweetsArrayAdapter aTweets;
-	private SwipeRefreshLayout swipeContainer;
 	private long oldestTweetID;
 	private long newestTweetID;
 	private Boolean shouldClear;
 	private int refresh_mode;
-
+	private TweetsListFragment fragmentTweetList;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_timeline);
 
 		client = QwikTweeterApplication.getRestClient();
-		lvTweets = (ListView) findViewById(R.id.lvTweets);
-		tweets = new ArrayList<Tweet>();
-		aTweets = new TweetsArrayAdapter(this, tweets);
-		lvTweets.setAdapter(aTweets);
-		swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainerTimeline);
+		
 		oldestTweetID = 0;
 		newestTweetID = 0;
 		refresh_mode = 0;
 		shouldClear = false;
-		swipeContainer.setOnRefreshListener(new OnRefreshListener() {
+		fragmentTweetList = (TweetsListFragment) getFragmentManager().findFragmentById(R.id.fragment_timeline);
+		fragmentTweetList.setPullToRefreshHandler(new OnRefreshListener() {
 			@Override
 			public void onRefresh() {
 				// Your code to refresh the list here.
@@ -59,14 +54,10 @@ public class TimelineActivity extends Activity {
 				populateTimeline(TwitterClient.GET_NEW_TWEETS);
 			}
 		});
-		swipeContainer.setColorSchemeResources(
-				android.R.color.holo_blue_bright,
-				android.R.color.holo_green_light,
-				android.R.color.holo_orange_light,
-				android.R.color.holo_red_light);
+		
 		populateTimeline(TwitterClient.GET_NEW_TWEETS);
 
-		lvTweets.setOnScrollListener(new EndlessScrollListener() {
+		fragmentTweetList.setEndlessScrollListener(new EndlessScrollListener() {
 
 			@Override
 			public void onLoadMore(int page, int totalItemsCount) {
@@ -88,8 +79,8 @@ public class TimelineActivity extends Activity {
 			}
 		}
 		if (!isNetworkAvailable()) {
-			if (tweets.size() == 0)
-				aTweets.addAll(Tweet.getAll());
+			if (fragmentTweetList.getListSize() == 0)
+				fragmentTweetList.addAllTweets(Tweet.getAll());
 			return;
 		}
 
@@ -101,15 +92,15 @@ public class TimelineActivity extends Activity {
 				ArrayList<Tweet> tweetArr = Tweet.fromJSON(arr);
 
 				if (shouldClear) {
-					aTweets.clear();
+					fragmentTweetList.clearAllTweets();
 				}
 				if (refresh_mode == TwitterClient.GET_MORE_TWEETS) {
-					aTweets.addAll(tweetArr);
+					fragmentTweetList.addAllTweets(tweetArr);
 				} else {
-					ArrayList<Tweet> oldtweets = new ArrayList<Tweet>(tweets);
-					aTweets.clear();
-					aTweets.addAll(tweetArr);
-					aTweets.addAll(oldtweets);
+					ArrayList<Tweet> oldtweets = new ArrayList<Tweet>(fragmentTweetList.getAllTweets());
+					fragmentTweetList.clearAllTweets();
+					fragmentTweetList.addAllTweets(tweetArr);
+					fragmentTweetList.addAllTweets(oldtweets);
 				}
 				for (Tweet t : tweetArr) {
 					if (t.getUid() > newestTweetID) {
@@ -123,7 +114,7 @@ public class TimelineActivity extends Activity {
 					}
 				}
 				Persistance.saveAll(null, tweetArr);
-				swipeContainer.setRefreshing(false);
+				fragmentTweetList.setRefreshingState(false);
 			}
 
 			@Override
@@ -154,7 +145,8 @@ public class TimelineActivity extends Activity {
 				 * lvTweets.scrollTo(0, 0);
 				 */
 				populateTimeline(TwitterClient.GET_NEW_TWEETS);
-				lvTweets.setSelectionAfterHeaderView();
+				fragmentTweetList.setListViewToTop();
+				//lvTweets.setSelectionAfterHeaderView();
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
