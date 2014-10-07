@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
@@ -19,33 +21,42 @@ import com.activeandroid.annotation.Table;
  following: [x]=>user=>following
 
  */
-@Table(name = "Users")
+@Table(name = "QTUsers")
 public class User extends Model implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -5525042597868378940L;
 
-	@Column(name = "uid", unique = true)
+	@Column(name = "qtuuid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
 	private long uid;
 
-	@Column(name = "name")
+	@Column(name = "qtname")
 	private String name;
 
-	@Column(name = "screenName")
+	@Column(name = "qtscreenName")
 	private String screenName;
 
-	@Column(name = "profileImageUrl")
+	@Column(name = "qtprofileImageUrl")
 	private String profileImageUrl;
 
-	@Column(name = "followersCount")
+	@Column(name = "qtprofileBGImageUrl")
+	private String profileBGImageUrl;
+
+	@Column(name = "qtfollowersCount")
 	private long followersCount;
 
-	@Column(name = "statusesCount")
+	@Column(name = "qtstatusesCount")
 	private long statusesCount;
 
-	@Column(name = "following")
+	@Column(name = "qtfriendsCount")
+	private long friendsCount;
+
+	@Column(name = "qtfollowing")
 	private Boolean following;
+
+	@Column(name = "qtdescription")
+	private String description;
 
 	public User() {
 		super();
@@ -55,15 +66,22 @@ public class User extends Model implements Serializable {
 		User o = new User();
 		// deserialize json object
 		try {
-			o.name = obj.getString("name");
+			o.name = obj.optString("name");
 			o.uid = obj.getLong("id");
-			o.screenName = obj.getString("screen_name");
-			o.profileImageUrl = obj.getString("profile_image_url");
+			o.screenName = obj.optString("screen_name");
+			o.profileImageUrl = obj
+					.optString(
+							"profile_image_url",
+							"https://abs.twimg.com/sticky/default_profile_images/default_profile_2_normal.png");
 			o.followersCount = obj.optLong("followers_count");
 			o.statusesCount = obj.optLong("statuses_count");
+			o.friendsCount = obj.optLong("friends_count");
+			o.profileBGImageUrl = obj.optString("profile_background_image_url");
+			o.description = obj.optString("description");
 			o.following = obj.optBoolean("following");
 		} catch (JSONException e) {
 			e.printStackTrace();
+			Log.e("Error", "Failed to convert json to user :" + obj.toString());
 			return null;
 		}
 		return o;
@@ -106,6 +124,10 @@ public class User extends Model implements Serializable {
 		return profileImageUrl;
 	}
 
+	public String getProfileBGImageUrl() {
+		return profileBGImageUrl;
+	}
+
 	public long getFollowersCount() {
 		return followersCount;
 	}
@@ -116,5 +138,13 @@ public class User extends Model implements Serializable {
 
 	public Boolean getFollowing() {
 		return following;
+	}
+
+	public long getFriendsCount() {
+		return friendsCount;
+	}
+
+	public String getDescription() {
+		return description;
 	}
 }

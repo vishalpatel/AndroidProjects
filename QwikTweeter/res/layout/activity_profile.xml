@@ -1,0 +1,129 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffff"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.qwiktweeter.android.basictweeter.ProfileActivity" >
+
+    <RelativeLayout
+        android:id="@+id/rlHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:paddingBottom="6dp" >
+
+        <ImageView
+            android:id="@+id/ivProfileBackgroundImage"
+            android:layout_width="fill_parent"
+            android:layout_height="100dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            android:src="@drawable/twitter_default_bg" />
+
+        <ImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/shape_view_border"
+            android:contentDescription="User profile image"
+            android:padding="2dp"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/tvScreenName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/tvUserName"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@+id/tvUserName"
+            android:text="@string/screen_name_placeholder"
+            android:textColor="#ffffff" />
+
+        <TextView
+            android:id="@+id/tvUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/ivProfileImage"
+            android:capitalize="words"
+            android:text="TextView"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/tvUserName"
+            android:layout_below="@+id/tvUserName"
+            android:text="Tagline"
+            android:textColor="#ffffff"
+            android:textSize="12sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/llStats"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/rlHeader"
+        android:background="@drawable/shape_border_bottom"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp" >
+
+        <TextView
+            android:id="@+id/tvTweetCount"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:paddingRight="3dp"
+            android:text="100 Tweets"
+            android:textColor="#afafaf"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvFollowersCount"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:background="@drawable/shape_border_left"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:text="100 Followers"
+            android:textColor="#afafaf"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/tvFollowingCount"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="bottom"
+            android:background="@drawable/shape_border_left"
+            android:paddingLeft="3dp"
+            android:text="20 Following"
+            android:textColor="#afafaf"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <fragment
+        android:id="@+id/fragmentUserTimeline"
+        android:name="com.qwiktweeter.android.basictweeter.fragments.UserTimelineFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/llStats"
+        tools:layout="@layout/fragment_tweets_list" />
+
+</RelativeLayout>

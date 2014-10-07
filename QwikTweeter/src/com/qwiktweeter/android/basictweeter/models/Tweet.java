@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 
@@ -31,42 +32,42 @@ import com.activeandroid.query.Select;
  entities => media => [x]=> type ''== photo''
  entities => media => [x]=> sizes => small => x,y,resize (fit,crop)
  */
-@Table(name = "Tweets")
+@Table(name = "QTTweets")
 public class Tweet extends Model implements Serializable {
 	/**
 	 * 
 	 */
 
 	private static final long serialVersionUID = 1645714390462363725L;
-	@Column(name = "body")
+	@Column(name = "qtbody")
 	private String body;
 
-	@Column(name = "uid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
+	@Column(name = "qtuid", unique = true, onUniqueConflict = Column.ConflictAction.REPLACE)
 	private long uid;
 
-	@Column(name = "createdAt")
+	@Column(name = "qtcreatedAt")
 	private String createdAt;
 
-	@Column(name = "media_photo_url")
+	@Column(name = "qtmedia_photo_url")
 	private String media_photo_url = null;
 
 	private static final int MEDIA_RESIZE_FIT = 1, MEDIA_RESIZE_CROP = 2;
-	@Column(name = "media_size_x")
+	@Column(name = "qtmedia_size_x")
 	private int media_size_x = 0;
 
-	@Column(name = "media_size_y")
+	@Column(name = "qtmedia_size_y")
 	private int media_size_y = 0;
 
-	@Column(name = "media_size_resize")
+	@Column(name = "qtmedia_size_resize")
 	private int media_size_resize;
 
-	@Column(name = "retweetCount")
+	@Column(name = "qtretweetCount")
 	private long retweetCount;
 
-	@Column(name = "favoriteCount")
+	@Column(name = "qtfavoriteCount")
 	private long favoriteCount;
 
-	@Column(name = "User", onUpdate = ForeignKeyAction.CASCADE)
+	@Column(name = "qtuser", onUpdate = ForeignKeyAction.CASCADE, onDelete = ForeignKeyAction.CASCADE)
 	private User user;
 
 	public Tweet() {
@@ -218,5 +219,10 @@ public class Tweet extends Model implements Serializable {
 		}
 		return ImageView.ScaleType.FIT_XY;
 	}
-
+	
+	public void savedata() {
+		user.save();
+		Log.i("userinfo", "got user id as " + user.getId());
+		this.save();
+	}
 }

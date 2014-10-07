@@ -6,7 +6,6 @@ import java.util.Collection;
 import android.os.AsyncTask;
 import android.widget.ProgressBar;
 
-import com.activeandroid.ActiveAndroid;
 import com.activeandroid.query.Delete;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
 import com.qwiktweeter.android.basictweeter.models.User;
@@ -34,19 +33,18 @@ public class Persistance {
 
 		@Override
 		protected Long doInBackground(Void... params) {
-			ActiveAndroid.beginTransaction();
+			//ActiveAndroid.beginTransaction();
 			try {
 				for (Tweet o : objs) {
-					o.getUser().save();
-					o.save();
+					o.savedata();
 				}
-				ActiveAndroid.setTransactionSuccessful();
+				//ActiveAndroid.setTransactionSuccessful();
 			}catch (Exception e) {
 				e.printStackTrace();
 				clearAll();
 			}
 			finally {
-				ActiveAndroid.endTransaction();
+				//ActiveAndroid.endTransaction();
 			}
 			return (long) objs.size();
 		}

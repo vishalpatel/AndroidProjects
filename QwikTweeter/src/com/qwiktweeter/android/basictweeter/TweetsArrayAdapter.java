@@ -3,6 +3,7 @@ package com.qwiktweeter.android.basictweeter;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
+import com.qwiktweeter.android.basictweeter.models.User;
 
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 	private class ViewHolder {
@@ -27,11 +29,24 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 	}
 
 	private ImageLoader imageLoader;
-
+	private OnClickListener profilePicClickListener;
+	private Context context;
+	
 	public TweetsArrayAdapter(Context context, List<Tweet> tweets) {
 		super(context, 0, tweets);
+		
 		imageLoader = ImageLoader.getInstance();
-
+		this.context = context;
+		profilePicClickListener = new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				User u = (User)v.getTag();
+				Intent i = new Intent(TweetsArrayAdapter.this.context, ProfileActivity.class);
+				i.putExtra("user", u);
+				TweetsArrayAdapter.this.context.startActivity(i);
+			}
+		};
 	}
 
 	@Override
@@ -107,6 +122,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
 		Linkify.addLinks(vh.tvTweetBody, Linkify.WEB_URLS);
 		vh.ivProfileImage.setImageResource(android.R.color.transparent);
+		vh.ivProfileImage.setTag(t.getUser());
+		vh.ivProfileImage.setOnClickListener(profilePicClickListener);
 		imageLoader.displayImage(t.getUser().getProfileImageUrl(),
 				vh.ivProfileImage);
 		

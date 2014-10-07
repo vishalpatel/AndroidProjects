@@ -111,6 +111,9 @@ abstract public class TweetsListFragment extends Fragment {
 
 	public void clearAllTweets() {
 		aTweets.clear();
+		oldestTweetID = 0;
+		newestTweetID = 0;
+		
 	}
 
 	public int getListSize() {

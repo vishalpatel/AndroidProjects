@@ -17,7 +17,7 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher_qkt"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/QwikCustomTheme" >
         <meta-data
             android:name="AA_DB_NAME"
             android:value="QwikTweet.db" />
@@ -52,6 +52,10 @@
         <activity
             android:name=".PostTweetActivity"
             android:label="@string/title_activity_post_tweet" >
+        </activity>
+        <activity
+            android:name=".ProfileActivity"
+            android:label="@string/title_activity_profile" >
         </activity>
     </application>
 

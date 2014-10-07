@@ -15,6 +15,7 @@ import com.qwiktweeter.android.basictweeter.listeners.FragmentTabListener;
 
 public class TimelineActivity extends FragmentActivity {
 	private static int POST_REQ = 51;
+	private static int SHOW_PROFILE = 52;
 
 	// private HomeTimelineFragment fragmentTweetList;
 
@@ -51,8 +52,7 @@ public class TimelineActivity extends FragmentActivity {
 				.setTag("MentionsTimelineFragment")
 				.setTabListener(
 						new FragmentTabListener<MentionsTimelineFragement>(
-								R.id.flContainer, this,
-								"mentions",
+								R.id.flContainer, this, "mentions",
 								MentionsTimelineFragement.class));
 		actionBar.addTab(tab2);
 	}
@@ -61,6 +61,12 @@ public class TimelineActivity extends FragmentActivity {
 
 		Intent i = new Intent(this, PostTweetActivity.class);
 		startActivityForResult(i, POST_REQ);
+	}
+
+	public void onProfileAction(MenuItem v) {
+		Intent i = new Intent(this, ProfileActivity.class);
+		i.putExtra("user", QwikTweeterApplication.getCurrentUser());
+		startActivityForResult(i, SHOW_PROFILE);
 	}
 
 	@Override
@@ -75,9 +81,15 @@ public class TimelineActivity extends FragmentActivity {
 				 * aTweets.add(newTweet); aTweets.addAll(oldtweets);
 				 * lvTweets.scrollTo(0, 0);
 				 */
-				//fragmentTweetList.populateTimeline(TwitterClient.GET_NEW_TWEETS);
-				//fragmentTweetList.setListViewToTop();
+				// fragmentTweetList.populateTimeline(TwitterClient.GET_NEW_TWEETS);
+				// fragmentTweetList.setListViewToTop();
 				// lvTweets.setSelectionAfterHeaderView();
+			}
+		}
+		
+		if (requestCode == SHOW_PROFILE) {
+			if (resultCode == RESULT_OK) {
+				//do nothing. 
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
