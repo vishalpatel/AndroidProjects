@@ -22,6 +22,7 @@ public class TimelineActivity extends FragmentActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_timeline);
 
 		setupTabs();
@@ -60,6 +61,8 @@ public class TimelineActivity extends FragmentActivity {
 	public void onComposeAction(MenuItem v) {
 
 		Intent i = new Intent(this, PostTweetActivity.class);
+		i.putExtra("reply_user", "");
+		i.putExtra("reply_id", 0);
 		startActivityForResult(i, POST_REQ);
 	}
 

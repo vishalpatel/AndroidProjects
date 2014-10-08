@@ -77,6 +77,7 @@ public class Tweet extends Model implements Serializable {
 	public static Tweet fromJSON(JSONObject obj) {
 		Tweet o = new Tweet();
 		// deserialize json object
+		//Log.i("INFO", obj.toString());
 		try {
 			o.body = obj.getString("text");
 			o.createdAt = obj.getString("created_at");

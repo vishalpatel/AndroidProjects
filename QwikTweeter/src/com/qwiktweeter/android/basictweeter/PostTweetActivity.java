@@ -31,6 +31,8 @@ public class PostTweetActivity extends Activity {
 	private User currentUser;
 	private ImageView ivPostProfileImage;
 	private TextView ivPostUserName, ivPostScreenName;
+	private String reply_user;
+	private long reply_tweet_id;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +53,9 @@ public class PostTweetActivity extends Activity {
 				currentUser.getProfileImageUrl(), ivPostProfileImage);
 		updateCharCount();
 		etCompose.setAutoLinkMask(Linkify.ALL);
-		etCompose.setFilters(new InputFilter[] {new InputFilter.LengthFilter(TOTAL_TWEET_LENGTH)});;
+		etCompose.setFilters(new InputFilter[] { new InputFilter.LengthFilter(
+				TOTAL_TWEET_LENGTH) });
+		;
 		etCompose.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -72,20 +76,33 @@ public class PostTweetActivity extends Activity {
 
 			}
 		});
+		Intent data = getIntent();
+		reply_tweet_id = 0;
+		reply_user = "";
+		if (data.getExtras().containsKey("reply_user")) {
+			reply_user = data.getExtras().getString("reply_user", "");
+		}
+		if (data.getExtras().containsKey("reply_id")) {
+			reply_tweet_id = data.getExtras().getLong("reply_id", 0);
+		}
+		if (reply_tweet_id != 0 && reply_user.length() > 0) {
+			etCompose.setText("@" + reply_user + ":");
+
+		}
 	}
 
 	private void updateCharCount() {
-		// TODO Auto-generated method stub
 		tvCharCount.setText(Integer.toString(tweetCharsRemain)
 				+ " characters left.");
 
 	}
 
 	public void onPostAction(View v) {
-		//Toast.makeText(this, "Post", Toast.LENGTH_SHORT).show();
+		// Toast.makeText(this, "Post", Toast.LENGTH_SHORT).show();
 		String msg = etCompose.getText().toString();
 		if (msg.length() == 0) {
-			Toast.makeText(this, "Please enter some message.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Please enter some message.",
+					Toast.LENGTH_SHORT).show();
 		}
 		publishTweet(msg);
 		btnPost.setText("Posting");
@@ -110,7 +127,7 @@ public class PostTweetActivity extends Activity {
 				Log.d("debug", s.toString());
 				Log.d("debug", e.toString());
 			}
-		});
+		}, reply_tweet_id);
 
 	}
 }

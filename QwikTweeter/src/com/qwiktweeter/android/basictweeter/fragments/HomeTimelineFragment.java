@@ -11,7 +11,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 
 	}
@@ -26,7 +25,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
 	@Override
 	protected void getTimeline(int mode, long tweet_id,
 			JsonHttpResponseHandler jsonHandler) {
-		// TODO Auto-generated method stub
 		client.getHomeTimeline(mode, tweet_id,jsonHandler);
 	}
 	

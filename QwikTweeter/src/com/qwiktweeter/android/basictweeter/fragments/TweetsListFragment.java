@@ -5,8 +5,8 @@ import java.util.Collection;
 
 import org.json.JSONArray;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
@@ -37,13 +37,14 @@ abstract public class TweetsListFragment extends Fragment {
 	private long newestTweetID;
 	private Boolean shouldClear;
 	private int refresh_mode;
-	
+
 	abstract protected void getTimeline(int mode, long tweet_id,
-			JsonHttpResponseHandler jsonHandler) ;
-	
+			JsonHttpResponseHandler jsonHandler);
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		tweets = new ArrayList<Tweet>();
 		aTweets = new TweetsArrayAdapter(getActivity(), tweets);
 		client = QwikTweeterApplication.getRestClient();
@@ -69,8 +70,7 @@ abstract public class TweetsListFragment extends Fragment {
 				android.R.color.holo_green_light,
 				android.R.color.holo_orange_light,
 				android.R.color.holo_red_light);
-		
-		
+
 		setPullToRefreshHandler(new OnRefreshListener() {
 			@Override
 			public void onRefresh() {
@@ -113,7 +113,7 @@ abstract public class TweetsListFragment extends Fragment {
 		aTweets.clear();
 		oldestTweetID = 0;
 		newestTweetID = 0;
-		
+
 	}
 
 	public int getListSize() {
@@ -128,7 +128,7 @@ abstract public class TweetsListFragment extends Fragment {
 	public Collection<? extends Tweet> getAllTweets() {
 		return tweets;
 	}
-	
+
 	public void populateTimeline(int mode) {
 		refresh_mode = mode;
 		long tweet_id = 1;
@@ -146,11 +146,11 @@ abstract public class TweetsListFragment extends Fragment {
 			return;
 		}
 
-		 JsonHttpResponseHandler jsonHandler = new JsonHttpResponseHandler() {
+		JsonHttpResponseHandler jsonHandler = new JsonHttpResponseHandler() {
 
 			@Override
 			public void onSuccess(JSONArray arr) {
-				Log.i("info", arr.toString());
+
 				ArrayList<Tweet> tweetArr = Tweet.fromJSON(arr);
 
 				if (shouldClear) {
@@ -188,11 +188,7 @@ abstract public class TweetsListFragment extends Fragment {
 
 		};
 		getTimeline(mode, tweet_id, jsonHandler);
-		
+
 	}
-
-	
-
-	
 
 }

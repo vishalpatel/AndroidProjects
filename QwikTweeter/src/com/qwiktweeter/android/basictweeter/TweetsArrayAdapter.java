@@ -25,7 +25,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 	private class ViewHolder {
 		TextView tvScreenName, tvTweetBody, tvUserName, tvTweetTime,
 				tvRetweetCount, tvFavorieCount;
-		ImageView ivProfileImage, ivTweetMedia, ivFavorite;
+		ImageView ivProfileImage, ivTweetMedia, ivFavorite, ivReply;
 	}
 
 	private ImageLoader imageLoader;
@@ -59,6 +59,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 			vh = new ViewHolder();
 			vh.tvScreenName = (TextView) convertView
 					.findViewById(R.id.tvScreenName);
+			vh.ivReply = (ImageView) convertView.findViewById(R.id.ivReply);
+			
 			vh.tvTweetBody = (TextView) convertView.findViewById(R.id.tvBody);
 			vh.tvTweetBody.setMovementMethod(LinkMovementMethod.getInstance());
 			vh.tvUserName = (TextView) convertView
@@ -69,6 +71,18 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 			vh.tvFavorieCount = (TextView) convertView
 					.findViewById(R.id.tvFavoriteCount);
 			vh.ivFavorite = (ImageView) convertView.findViewById(R.id.ivFavorite);
+			OnClickListener replyClickListener = new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Tweet t = (Tweet)v.getTag();
+					Intent i = new Intent(context, PostTweetActivity.class);
+					i.putExtra("reply_user", t.getUser().getScreenName());
+					i.putExtra("reply_id", t.getUid());
+					context.startActivity(i);
+				}
+			};
+			vh.ivReply.setOnClickListener(replyClickListener);
 			OnClickListener favClickListener = new OnClickListener() {
 
 				@Override
@@ -78,6 +92,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 					QwikTweeterApplication.getRestClient().postFavoriteATweet(
 							t.getUid(),
 							new JsonHttpResponseHandler() {
+								@Override
 								public void onSuccess(int arg0,
 										org.json.JSONObject arg1) {
 									Toast.makeText(getContext(), "Favorited",
@@ -113,6 +128,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
 		vh.tvFavorieCount.setTag(t);
 		vh.ivFavorite.setTag(t);
+		vh.ivReply.setTag(t);
 		vh.tvScreenName.setText("@" + t.getUser().getScreenName());
 		vh.tvTweetBody.setText(t.getBody());
 		vh.tvRetweetCount.setText(Long.toString(t.getRetweetCount()));
