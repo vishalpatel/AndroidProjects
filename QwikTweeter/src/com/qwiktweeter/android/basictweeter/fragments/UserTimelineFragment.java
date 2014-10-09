@@ -18,4 +18,9 @@ public class UserTimelineFragment extends TweetsListFragment {
 		populateTimeline(TwitterClient.GET_NEW_TWEETS);
 	}
 
+	@Override
+	protected Boolean shouldSaveTweets() {
+		return false;
+	}
+
 }

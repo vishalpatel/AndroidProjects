@@ -27,6 +27,12 @@ public class HomeTimelineFragment extends TweetsListFragment {
 			JsonHttpResponseHandler jsonHandler) {
 		client.getHomeTimeline(mode, tweet_id,jsonHandler);
 	}
+
+	@Override
+	protected Boolean shouldSaveTweets() {
+		// TODO Auto-generated method stub
+		return true;
+	}
 	
 	
 

@@ -8,6 +8,9 @@
 # Java class files
 *.class
 
+# Vishal ignore files
+*.vignore
+
 # Generated files
 bin/
 gen/

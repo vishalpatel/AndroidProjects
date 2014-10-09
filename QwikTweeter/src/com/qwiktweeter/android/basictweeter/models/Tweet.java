@@ -139,7 +139,7 @@ public class Tweet extends Model implements Serializable {
 	}
 
 	public static List<Tweet> getAll() {
-		return new Select().from(Tweet.class).orderBy("uid DESC").execute();
+		return new Select().from(Tweet.class).orderBy("qtuid DESC").execute();
 	}
 
 	public String toString() {
