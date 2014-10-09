@@ -143,8 +143,10 @@ abstract public class TweetsListFragment extends Fragment {
 			}
 		}
 		if (!InternetConnectivity.getInstance(getActivity()).isConnected()) {
-			if (getListSize() == 0)
-				addAllTweets(Tweet.getAll());
+			if (shouldSaveTweets()) {
+				if (getListSize() == 0)
+					addAllTweets(Tweet.getAll());
+			}
 			return;
 		}
 
