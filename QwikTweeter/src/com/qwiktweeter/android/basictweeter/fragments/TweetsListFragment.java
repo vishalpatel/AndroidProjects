@@ -41,10 +41,12 @@ abstract public class TweetsListFragment extends Fragment {
 	abstract protected void getTimeline(int mode, long tweet_id,
 			JsonHttpResponseHandler jsonHandler);
 
+	abstract protected Boolean shouldSaveTweets();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		tweets = new ArrayList<Tweet>();
 		aTweets = new TweetsArrayAdapter(getActivity(), tweets);
 		client = QwikTweeterApplication.getRestClient();
@@ -141,8 +143,10 @@ abstract public class TweetsListFragment extends Fragment {
 			}
 		}
 		if (!InternetConnectivity.getInstance(getActivity()).isConnected()) {
-			if (getListSize() == 0)
-				addAllTweets(Tweet.getAll());
+			if (shouldSaveTweets()) {
+				if (getListSize() == 0)
+					addAllTweets(Tweet.getAll());
+			}
 			return;
 		}
 
@@ -176,14 +180,16 @@ abstract public class TweetsListFragment extends Fragment {
 						oldestTweetID = t.getUid();
 					}
 				}
-				Persistance.saveAll(null, tweetArr);
+				if (shouldSaveTweets()) {
+					Persistance.saveAll(null, tweetArr);
+				}
 				setRefreshingState(false);
 			}
 
 			@Override
 			public void onFailure(Throwable e, String s) {
-				Log.d("debug", s.toString());
-				Log.d("debug", e.toString());
+				Log.e("ERROR", s.toString());
+				Log.e("ERROR", e.toString());
 			}
 
 		};

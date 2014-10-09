@@ -29,4 +29,9 @@ public class MentionsTimelineFragement extends TweetsListFragment {
 		
 	}
 
+	@Override
+	protected Boolean shouldSaveTweets() {
+		return false;
+	}
+
 }
