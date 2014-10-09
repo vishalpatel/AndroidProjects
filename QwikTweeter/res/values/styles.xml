@@ -17,4 +17,17 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
+    <style name="QwikCustomTheme" parent="@android:style/Theme.Holo.Light">
+        <item name="android:actionBarStyle">@style/QwikActionBar</item>
+    </style>
+
+    <style name="QwikActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">#55acee</item>
+        <item name="android:titleTextStyle">@style/QwikActionBar.TitleTextStyle</item>
+    </style>
+
+    <style name="QwikActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
 </resources>

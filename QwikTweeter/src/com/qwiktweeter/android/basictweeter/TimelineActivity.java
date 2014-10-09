@@ -1,144 +1,75 @@
 package com.qwiktweeter.android.basictweeter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.json.JSONArray;
-
-import android.app.Activity;
-import android.content.Context;
+import android.app.ActionBar;
+import android.app.ActionBar.Tab;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.ListView;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.qwiktweeter.android.basictweeter.Persistance.PersistenceTask;
-import com.qwiktweeter.android.basictweeter.models.Tweet;
+import com.qwiktweeter.android.basictweeter.fragments.HomeTimelineFragment;
+import com.qwiktweeter.android.basictweeter.fragments.MentionsTimelineFragement;
+import com.qwiktweeter.android.basictweeter.listeners.FragmentTabListener;
 
-public class TimelineActivity extends Activity {
+public class TimelineActivity extends FragmentActivity {
 	private static int POST_REQ = 51;
-	private TwitterClient client;
-	private ListView lvTweets;
-	private ArrayList<Tweet> tweets;
-	private TweetsArrayAdapter aTweets;
-	private SwipeRefreshLayout swipeContainer;
-	private long oldestTweetID;
-	private long newestTweetID;
-	private Boolean shouldClear;
-	private int refresh_mode;
+	private static int SHOW_PROFILE = 52;
+
+	// private HomeTimelineFragment fragmentTweetList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.activity_timeline);
 
-		client = QwikTweeterApplication.getRestClient();
-		lvTweets = (ListView) findViewById(R.id.lvTweets);
-		tweets = new ArrayList<Tweet>();
-		aTweets = new TweetsArrayAdapter(this, tweets);
-		lvTweets.setAdapter(aTweets);
-		swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainerTimeline);
-		oldestTweetID = 0;
-		newestTweetID = 0;
-		refresh_mode = 0;
-		shouldClear = false;
-		swipeContainer.setOnRefreshListener(new OnRefreshListener() {
-			@Override
-			public void onRefresh() {
-				// Your code to refresh the list here.
-				// Make sure you call swipeContainer.setRefreshing(false)
-				// once the network request has completed successfully.
-				populateTimeline(TwitterClient.GET_NEW_TWEETS);
-			}
-		});
-		swipeContainer.setColorSchemeResources(
-				android.R.color.holo_blue_bright,
-				android.R.color.holo_green_light,
-				android.R.color.holo_orange_light,
-				android.R.color.holo_red_light);
-		populateTimeline(TwitterClient.GET_NEW_TWEETS);
-
-		lvTweets.setOnScrollListener(new EndlessScrollListener() {
-
-			@Override
-			public void onLoadMore(int page, int totalItemsCount) {
-				populateTimeline(TwitterClient.GET_MORE_TWEETS);
-
-			}
-		});
+		setupTabs();
 	}
 
-	public void populateTimeline(int mode) {
-		refresh_mode = mode;
-		long tweet_id = 1;
-		if (mode == TwitterClient.GET_NEW_TWEETS) {
-			tweet_id = newestTweetID + 1;
-		} else {
-			tweet_id = oldestTweetID - 1;
-			if (tweet_id < 0) {
-				tweet_id = 0;
-			}
-		}
-		if (!isNetworkAvailable()) {
-			if (tweets.size() == 0)
-				aTweets.addAll(Tweet.getAll());
-			return;
-		}
+	private void setupTabs() {
+		ActionBar actionBar = getActionBar();
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+		actionBar.setDisplayShowTitleEnabled(true);
 
-		client.getHomeTimeline(mode, tweet_id, new JsonHttpResponseHandler() {
+		Tab tab1 = actionBar
+				.newTab()
+				.setText("Home")
+				.setIcon(R.drawable.ic_action_home)
+				.setTag("HomeTimelineFragment")
+				.setTabListener(
+						new FragmentTabListener<HomeTimelineFragment>(
+								R.id.flContainer, this, "home",
+								HomeTimelineFragment.class));
 
-			@Override
-			public void onSuccess(JSONArray arr) {
-				Log.i("info", arr.toString());
-				ArrayList<Tweet> tweetArr = Tweet.fromJSON(arr);
+		actionBar.addTab(tab1);
+		actionBar.selectTab(tab1);
 
-				if (shouldClear) {
-					aTweets.clear();
-				}
-				if (refresh_mode == TwitterClient.GET_MORE_TWEETS) {
-					aTweets.addAll(tweetArr);
-				} else {
-					ArrayList<Tweet> oldtweets = new ArrayList<Tweet>(tweets);
-					aTweets.clear();
-					aTweets.addAll(tweetArr);
-					aTweets.addAll(oldtweets);
-				}
-				for (Tweet t : tweetArr) {
-					if (t.getUid() > newestTweetID) {
-						newestTweetID = t.getUid();
-					}
-					if (oldestTweetID == 0) {
-						oldestTweetID = t.getUid();
-					}
-					if (t.getUid() < oldestTweetID) {
-						oldestTweetID = t.getUid();
-					}
-				}
-				Persistance.saveAll(null, tweetArr);
-				swipeContainer.setRefreshing(false);
-			}
-
-			@Override
-			public void onFailure(Throwable e, String s) {
-				Log.d("debug", s.toString());
-				Log.d("debug", e.toString());
-			}
-
-		});
+		Tab tab2 = actionBar
+				.newTab()
+				.setText("Mentions")
+				.setIcon(R.drawable.ic_action_mentions)
+				.setTag("MentionsTimelineFragment")
+				.setTabListener(
+						new FragmentTabListener<MentionsTimelineFragement>(
+								R.id.flContainer, this, "mentions",
+								MentionsTimelineFragement.class));
+		actionBar.addTab(tab2);
 	}
 
 	public void onComposeAction(MenuItem v) {
 
 		Intent i = new Intent(this, PostTweetActivity.class);
+		i.putExtra("reply_user", "");
+		i.putExtra("reply_id", 0);
 		startActivityForResult(i, POST_REQ);
+	}
+
+	public void onProfileAction(MenuItem v) {
+		Intent i = new Intent(this, ProfileActivity.class);
+		i.putExtra("user", QwikTweeterApplication.getCurrentUser());
+		startActivityForResult(i, SHOW_PROFILE);
 	}
 
 	@Override
@@ -153,8 +84,15 @@ public class TimelineActivity extends Activity {
 				 * aTweets.add(newTweet); aTweets.addAll(oldtweets);
 				 * lvTweets.scrollTo(0, 0);
 				 */
-				populateTimeline(TwitterClient.GET_NEW_TWEETS);
-				lvTweets.setSelectionAfterHeaderView();
+				// fragmentTweetList.populateTimeline(TwitterClient.GET_NEW_TWEETS);
+				// fragmentTweetList.setListViewToTop();
+				// lvTweets.setSelectionAfterHeaderView();
+			}
+		}
+		
+		if (requestCode == SHOW_PROFILE) {
+			if (resultCode == RESULT_OK) {
+				//do nothing. 
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
@@ -167,11 +105,4 @@ public class TimelineActivity extends Activity {
 		return true;
 	}
 
-	public Boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager
-				.getActiveNetworkInfo();
-		return activeNetworkInfo != null
-				&& activeNetworkInfo.isConnectedOrConnecting();
-	}
 }

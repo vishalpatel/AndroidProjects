@@ -3,6 +3,7 @@ package com.qwiktweeter.android.basictweeter;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.Log;
@@ -18,20 +19,34 @@ import android.widget.Toast;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.qwiktweeter.android.basictweeter.models.Tweet;
+import com.qwiktweeter.android.basictweeter.models.User;
 
 public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 	private class ViewHolder {
 		TextView tvScreenName, tvTweetBody, tvUserName, tvTweetTime,
 				tvRetweetCount, tvFavorieCount;
-		ImageView ivProfileImage, ivTweetMedia, ivFavorite;
+		ImageView ivProfileImage, ivTweetMedia, ivFavorite, ivReply;
 	}
 
 	private ImageLoader imageLoader;
-
+	private OnClickListener profilePicClickListener;
+	private Context context;
+	
 	public TweetsArrayAdapter(Context context, List<Tweet> tweets) {
 		super(context, 0, tweets);
+		
 		imageLoader = ImageLoader.getInstance();
-
+		this.context = context;
+		profilePicClickListener = new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				User u = (User)v.getTag();
+				Intent i = new Intent(TweetsArrayAdapter.this.context, ProfileActivity.class);
+				i.putExtra("user", u);
+				TweetsArrayAdapter.this.context.startActivity(i);
+			}
+		};
 	}
 
 	@Override
@@ -44,6 +59,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 			vh = new ViewHolder();
 			vh.tvScreenName = (TextView) convertView
 					.findViewById(R.id.tvScreenName);
+			vh.ivReply = (ImageView) convertView.findViewById(R.id.ivReply);
+			
 			vh.tvTweetBody = (TextView) convertView.findViewById(R.id.tvBody);
 			vh.tvTweetBody.setMovementMethod(LinkMovementMethod.getInstance());
 			vh.tvUserName = (TextView) convertView
@@ -54,6 +71,18 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 			vh.tvFavorieCount = (TextView) convertView
 					.findViewById(R.id.tvFavoriteCount);
 			vh.ivFavorite = (ImageView) convertView.findViewById(R.id.ivFavorite);
+			OnClickListener replyClickListener = new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					Tweet t = (Tweet)v.getTag();
+					Intent i = new Intent(context, PostTweetActivity.class);
+					i.putExtra("reply_user", t.getUser().getScreenName());
+					i.putExtra("reply_id", t.getUid());
+					context.startActivity(i);
+				}
+			};
+			vh.ivReply.setOnClickListener(replyClickListener);
 			OnClickListener favClickListener = new OnClickListener() {
 
 				@Override
@@ -63,6 +92,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 					QwikTweeterApplication.getRestClient().postFavoriteATweet(
 							t.getUid(),
 							new JsonHttpResponseHandler() {
+								@Override
 								public void onSuccess(int arg0,
 										org.json.JSONObject arg1) {
 									Toast.makeText(getContext(), "Favorited",
@@ -98,6 +128,7 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
 		vh.tvFavorieCount.setTag(t);
 		vh.ivFavorite.setTag(t);
+		vh.ivReply.setTag(t);
 		vh.tvScreenName.setText("@" + t.getUser().getScreenName());
 		vh.tvTweetBody.setText(t.getBody());
 		vh.tvRetweetCount.setText(Long.toString(t.getRetweetCount()));
@@ -107,6 +138,8 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
 
 		Linkify.addLinks(vh.tvTweetBody, Linkify.WEB_URLS);
 		vh.ivProfileImage.setImageResource(android.R.color.transparent);
+		vh.ivProfileImage.setTag(t.getUser());
+		vh.ivProfileImage.setOnClickListener(profilePicClickListener);
 		imageLoader.displayImage(t.getUser().getProfileImageUrl(),
 				vh.ivProfileImage);
 		

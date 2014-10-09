@@ -41,12 +41,19 @@ public class QwikTweeterApplication extends com.activeandroid.app.Application {
 		return (TwitterClient) TwitterClient.getInstance(TwitterClient.class,
 				QwikTweeterApplication.context);
 	}
+	
 
 	public static User getCurrentUser() {
 		return currentUser;
 	}
 
-
+	public Boolean isNetworkAvailable() {
+		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager
+				.getActiveNetworkInfo();
+		return activeNetworkInfo != null
+				&& activeNetworkInfo.isConnectedOrConnecting();
+	}
 
 	public static void setCurrentUser(User currentUser) {
 		QwikTweeterApplication.currentUser = currentUser;

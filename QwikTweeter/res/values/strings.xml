@@ -14,5 +14,8 @@
     <string name="title_activity_post_tweet">New Tweet</string>
     <string name="post">Post</string>
     <string name="tweet_time_placeholder">x mins ago</string>
+    <string name="profile">Profile</string>
+    <string name="title_activity_profile">Profile</string>
+    <string name="tweet_post_hint">Whats happening...?</string>
 
 </resources>

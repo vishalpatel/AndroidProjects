@@ -2,23 +2,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     tools:context="${relativePackage}.${activityClass}" >
+<!-- 
+    <fragment
+        android:id="@+id/fragment_timeline"
+        android:name="com.qwiktweeter.android.basictweeter.fragments.MentionsTimelineFragement"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        tools:layout="@layout/fragment_tweets_list" />
+ -->
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/swipeContainerTimeline"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+    <FrameLayout
+        android:id="@+id/flContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true" >
 
-        <ListView
-            android:id="@+id/lvTweets"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true" >
-        </ListView>
-    </android.support.v4.widget.SwipeRefreshLayout>
-
+    </FrameLayout>
+ 
 </RelativeLayout>
